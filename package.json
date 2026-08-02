@@ -1,0 +1,9 @@
+{
+  "name": "actually-free-tools",
+  "version": "0.1.0",
+  "description": "Basic tools that got paywalled, rebuilt to run entirely in the browser",
+  "private": true,
+  "scripts": {
+    "test": "node tests/test.mjs"
+  }
+}
