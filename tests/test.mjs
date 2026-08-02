@@ -17,8 +17,8 @@ import { dirname, join } from 'node:path';
 
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));
-const QR = require(join(here, '..', 'assets', 'qrcode.js'));
-const Barcode = require(join(here, '..', 'assets', 'barcode.js'));
+const QR = require(join(here, '..', 'qr-barcode', 'qrcode.js'));
+const Barcode = require(join(here, '..', 'qr-barcode', 'barcode.js'));
 const vectors = JSON.parse(readFileSync(join(here, 'vectors.json'), 'utf8'));
 
 let passed = 0;

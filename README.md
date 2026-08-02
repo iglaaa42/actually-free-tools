@@ -4,10 +4,21 @@ Rebuilds of basic tools that got paywalled, ad-stuffed, or turned into a funnel.
 No accounts, no uploads, no "dynamic" links pointing at someone else's redirect
 domain.
 
+Open `index.html` for the tool index. Everything is static files — no build step,
+no server, no dependencies — so it runs from disk or from any static host. Staying
+that cheap to host is a hard constraint, not an accident; see
+[CLAUDE.md](CLAUDE.md) for the rules.
+
+## Tools
+
+| | |
+|---|---|
+| [`qr-barcode/`](qr-barcode/) | QR codes and 1D barcodes, PNG or SVG |
+
 ## QR & barcode generator
 
-Open `index.html`. That's it — no build step, no server, no dependencies. Save
-the folder and it works with the network off.
+Open `qr-barcode/index.html`. Save the folder (with `assets/` alongside it) and it
+works with the network off.
 
 **QR codes** — ISO/IEC 18004: versions 1–40, error correction L/M/Q/H, numeric /
 alphanumeric / byte (UTF-8) modes, all eight data masks with the standard penalty
@@ -77,25 +88,27 @@ References, and why each was picked:
 ## Layout
 
 ```
-index.html            the tool
-assets/qrcode.js      QR encoder      (standalone, works in Node too)
-assets/barcode.js     barcode encoders (standalone, works in Node too)
-assets/render.js      shared layout → canvas + SVG
-assets/app.js         UI glue
-tests/                test suite and reference vectors
+index.html               landing page
+favicon.svg              one mark for the whole site
+assets/site.css          shared shell: tokens, chrome, controls, cards
+qr-barcode/              one directory per tool
+  index.html             the tool
+  tool.css               layout specific to this tool
+  qrcode.js              QR encoder       (standalone, works in Node too)
+  barcode.js             barcode encoders (standalone, works in Node too)
+  render.js              shared layout → canvas + SVG
+  app.js                 UI glue
+tests/                   test suite and reference vectors
 ```
 
 The encoders have no DOM dependency and export themselves under CommonJS as well,
 so they're usable outside the page:
 
 ```js
-const QR = require('./assets/qrcode.js');
+const QR = require('./qr-barcode/qrcode.js');
 const qr = QR.encode('https://example.com', { ecl: 'M' });
 qr.get(x, y);  // true = dark module
 ```
-
-When a second tool lands, this one moves into its own directory with a small
-index at the repo root.
 
 ## Not done yet
 

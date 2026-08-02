@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR &amp; barcode generator — actually free tools</title>
+<meta name="description" content="Offline QR code and barcode generator. No tracking, no redirects, no sign-up. Everything is computed in your browser.">
+<!-- No network access of any kind: no fetch/XHR/WebSocket, no external assets, no form posts. -->
+<meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="tool.css">
+<link rel="icon" href="../favicon.svg">
+</head>
+<body>
+
+<header class="site-bar">
+  <a class="wordmark" href="../">actually <b>free</b> tools</a>
+  <nav class="site-nav">
+    <a href="https://github.com/iglaaa42/actually-free-tools">Source</a>
+  </nav>
+</header>
+
+<div class="page-header">
+  <p class="crumb"><a href="../">← All tools</a></p>
+  <h1>QR &amp; barcode generator</h1>
+  <p class="lede">
+    Runs entirely in your browser. No account, no watermark, no redirect service in the middle —
+    the code you generate encodes exactly what you typed, forever.
+  </p>
+</div>
+
+<main>
+  <div class="tabs" role="tablist" aria-label="Code type">
+    <button type="button" role="tab" id="tab-qr" class="tab is-active" aria-selected="true" aria-controls="panel-qr">QR code</button>
+    <button type="button" role="tab" id="tab-barcode" class="tab" aria-selected="false" aria-controls="panel-barcode">Barcode</button>
+  </div>
+
+  <div class="workspace">
+    <!-- ------------------------------------------------------------ inputs -->
+    <section class="controls panel">
+      <div id="panel-qr" role="tabpanel" aria-labelledby="tab-qr">
+        <div class="field">
+          <label for="qr-type">Content</label>
+          <select id="qr-type">
+            <option value="text">Text or URL</option>
+            <option value="wifi">Wi-Fi network</option>
+            <option value="vcard">Contact card</option>
+            <option value="email">Email</option>
+            <option value="sms">SMS</option>
+            <option value="tel">Phone number</option>
+            <option value="geo">Location</option>
+          </select>
+        </div>
+
+        <div class="subform" data-qr-form="text">
+          <div class="field">
+            <label for="qr-text">Text or URL</label>
+            <textarea id="qr-text" rows="4" spellcheck="false" placeholder="https://example.com">https://example.com</textarea>
+          </div>
+        </div>
+
+        <div class="subform" data-qr-form="wifi" hidden>
+          <div class="field">
+            <label for="wifi-ssid">Network name (SSID)</label>
+            <input id="wifi-ssid" type="text" spellcheck="false" placeholder="My Network">
+          </div>
+          <div class="field">
+            <label for="wifi-password">Password</label>
+            <input id="wifi-password" type="text" spellcheck="false" placeholder="hunter2">
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="wifi-security">Security</label>
+              <select id="wifi-security">
+                <option value="WPA">WPA / WPA2 / WPA3</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">None</option>
+              </select>
+            </div>
+            <div class="field checkbox">
+              <label><input id="wifi-hidden" type="checkbox"> Hidden network</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="subform" data-qr-form="vcard" hidden>
+          <div class="row">
+            <div class="field">
+              <label for="vc-first">First name</label>
+              <input id="vc-first" type="text" placeholder="Jane">
+            </div>
+            <div class="field">
+              <label for="vc-last">Last name</label>
+              <input id="vc-last" type="text" placeholder="Doe">
+            </div>
+          </div>
+          <div class="field">
+            <label for="vc-org">Organisation</label>
+            <input id="vc-org" type="text" placeholder="Example Ltd">
+          </div>
+          <div class="field">
+            <label for="vc-title">Job title</label>
+            <input id="vc-title" type="text" placeholder="Engineer">
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="vc-phone">Phone</label>
+              <input id="vc-phone" type="text" spellcheck="false" placeholder="+1 555 0100">
+            </div>
+            <div class="field">
+              <label for="vc-email">Email</label>
+              <input id="vc-email" type="text" spellcheck="false" placeholder="jane@example.com">
+            </div>
+          </div>
+          <div class="field">
+            <label for="vc-url">Website</label>
+            <input id="vc-url" type="text" spellcheck="false" placeholder="https://example.com">
+          </div>
+        </div>
+
+        <div class="subform" data-qr-form="email" hidden>
+          <div class="field">
+            <label for="em-to">To</label>
+            <input id="em-to" type="text" spellcheck="false" placeholder="jane@example.com">
+          </div>
+          <div class="field">
+            <label for="em-subject">Subject</label>
+            <input id="em-subject" type="text" placeholder="Hello">
+          </div>
+          <div class="field">
+            <label for="em-body">Message</label>
+            <textarea id="em-body" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="subform" data-qr-form="sms" hidden>
+          <div class="field">
+            <label for="sms-number">Number</label>
+            <input id="sms-number" type="text" spellcheck="false" placeholder="+15550100">
+          </div>
+          <div class="field">
+            <label for="sms-body">Message</label>
+            <textarea id="sms-body" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="subform" data-qr-form="tel" hidden>
+          <div class="field">
+            <label for="tel-number">Phone number</label>
+            <input id="tel-number" type="text" spellcheck="false" placeholder="+15550100">
+          </div>
+        </div>
+
+        <div class="subform" data-qr-form="geo" hidden>
+          <div class="row">
+            <div class="field">
+              <label for="geo-lat">Latitude</label>
+              <input id="geo-lat" type="text" spellcheck="false" placeholder="51.5033">
+            </div>
+            <div class="field">
+              <label for="geo-lon">Longitude</label>
+              <input id="geo-lon" type="text" spellcheck="false" placeholder="-0.1196">
+            </div>
+          </div>
+        </div>
+
+        <details class="options">
+          <summary>Appearance &amp; error correction</summary>
+          <div class="row">
+            <div class="field">
+              <label for="qr-ecl">Error correction</label>
+              <select id="qr-ecl">
+                <option value="L">L — recovers ~7%</option>
+                <option value="M" selected>M — recovers ~15%</option>
+                <option value="Q">Q — recovers ~25%</option>
+                <option value="H">H — recovers ~30%</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="qr-scale">Module size <output id="qr-scale-out">8</output> px</label>
+              <input id="qr-scale" type="range" min="2" max="24" value="8">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="qr-margin">Quiet zone <output id="qr-margin-out">4</output> modules</label>
+              <input id="qr-margin" type="range" min="0" max="10" value="4">
+            </div>
+            <div class="field checkbox">
+              <label><input id="qr-boost" type="checkbox" checked> Raise error correction when it's free</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="qr-dark">Foreground</label>
+              <input id="qr-dark" type="color" value="#000000">
+            </div>
+            <div class="field">
+              <label for="qr-light">Background</label>
+              <input id="qr-light" type="color" value="#ffffff">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field checkbox">
+              <label><input id="qr-transparent" type="checkbox"> Transparent background</label>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div id="panel-barcode" role="tabpanel" aria-labelledby="tab-barcode" hidden>
+        <div class="field">
+          <label for="bc-format">Format</label>
+          <select id="bc-format">
+            <option value="code128">Code 128 — any text, most common</option>
+            <option value="ean13">EAN-13 — retail, 13 digits</option>
+            <option value="ean8">EAN-8 — small packages, 8 digits</option>
+            <option value="upca">UPC-A — retail (US), 12 digits</option>
+            <option value="code39">Code 39 — A–Z 0–9 and a few symbols</option>
+            <option value="itf">ITF — digits, in pairs</option>
+            <option value="itf14">ITF-14 — shipping cartons, 14 digits</option>
+          </select>
+          <p class="hint" id="bc-hint"></p>
+        </div>
+
+        <div class="field">
+          <label for="bc-value">Value</label>
+          <input id="bc-value" type="text" spellcheck="false" value="ACTUALLY-FREE-001">
+        </div>
+
+        <div class="field checkbox" id="bc-check-wrap" hidden>
+          <label><input id="bc-check" type="checkbox"> Append Code 39 check character</label>
+        </div>
+
+        <details class="options" open>
+          <summary>Appearance</summary>
+          <div class="row">
+            <div class="field">
+              <label for="bc-scale">Bar width <output id="bc-scale-out">3</output> px</label>
+              <input id="bc-scale" type="range" min="1" max="10" value="3">
+            </div>
+            <div class="field">
+              <label for="bc-height">Height <output id="bc-height-out">90</output> px</label>
+              <input id="bc-height" type="range" min="20" max="240" step="5" value="90">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field checkbox">
+              <label><input id="bc-showtext" type="checkbox" checked> Show text under the bars</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="bc-dark">Foreground</label>
+              <input id="bc-dark" type="color" value="#000000">
+            </div>
+            <div class="field">
+              <label for="bc-light">Background</label>
+              <input id="bc-light" type="color" value="#ffffff">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field checkbox">
+              <label><input id="bc-transparent" type="checkbox"> Transparent background</label>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------- preview -->
+    <section class="preview panel">
+      <div class="preview-stage" id="stage">
+        <canvas id="canvas" aria-label="Generated code"></canvas>
+      </div>
+      <p class="error" id="error" role="alert" hidden></p>
+      <p class="meta" id="meta"></p>
+      <div class="actions">
+        <button type="button" id="download-png" class="btn primary">Download PNG</button>
+        <button type="button" id="download-svg" class="btn">Download SVG</button>
+        <button type="button" id="copy-png" class="btn" hidden>Copy image</button>
+      </div>
+      <p class="meta" id="copy-status" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <section class="notes panel prose">
+    <h2>What this does and doesn't do</h2>
+    <ul>
+      <li><strong>Nothing leaves this page.</strong> The QR and barcode encoders run locally; the page makes no
+        network requests at all, which you can confirm in your browser's network tab (or by loading it with the
+        Wi-Fi off — download the repository and open this page straight from disk).</li>
+      <li><strong>Your QR encodes your data directly.</strong> Plenty of "free" generators hand you a code pointing at
+        <em>their</em> redirect domain, so they can count scans, insert ads, or switch the destination off once a
+        trial ends. There is no redirect here — scanning gives back exactly the text shown below the preview.</li>
+      <li><strong>Print-ready output.</strong> PNG for quick use, SVG when it needs to scale to a poster or a label.</li>
+      <li><strong>Not included:</strong> tracking, analytics, "dynamic" codes, logo embedding in the middle of the
+        symbol (which trades away error correction for branding).</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Every encoder in this page is readable source you can check, and the test suite verifies it against
+     independent reference implementations: <code>node tests/test.mjs</code>.</p>
+  <p><a href="../">All tools</a> · <a href="https://github.com/iglaaa42/actually-free-tools">Source on GitHub</a></p>
+</footer>
+
+<script src="qrcode.js"></script>
+<script src="barcode.js"></script>
+<script src="render.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

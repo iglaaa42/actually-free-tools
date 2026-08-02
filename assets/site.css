@@ -1,0 +1,282 @@
+/*
+ * Shared shell for actually-free-tools.
+ *
+ * Design tokens, page chrome, form controls, buttons and cards — everything
+ * that isn't specific to one tool. Tool-specific layout lives in <tool>/tool.css.
+ *
+ * Deliberate constraints: system fonts only, no images, no external requests,
+ * no JavaScript needed to render any of this. The whole site has to stay small
+ * enough to host anywhere for nothing.
+ */
+
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --surface-2: #f0f0ec;
+  --text: #14141a;
+  --muted: #5f6067;
+  --border: #dcdcd6;
+  --border-strong: #c3c3bb;
+
+  /* Filled controls are ink, not a brand colour — the accent stays a small mark. */
+  --ink: #14141a;
+  --ink-text: #ffffff;
+  --link: #0f766e;
+  --link-soft: rgba(15, 118, 110, 0.09);
+  --danger: #b3261e;
+
+  --radius: 10px;
+  --radius-sm: 8px;
+  --page: 1080px;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121316;
+    --surface: #191a1e;
+    --surface-2: #212328;
+    --text: #e8e8e6;
+    --muted: #9a9ba3;
+    --border: #2e3036;
+    --border-strong: #454851;
+
+    --ink: #e8e8e6;
+    --ink-text: #121316;
+    --link: #5eead4;
+    --link-soft: rgba(94, 234, 212, 0.12);
+    --danger: #ff8a80;
+  }
+}
+
+* { box-sizing: border-box; }
+
+/* Class-based display rules below would otherwise beat the [hidden] default. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  padding: 0 1.25rem 3rem;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.site-bar, .page-header, main, .site-footer {
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+a { color: var(--link); }
+
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+
+/* --------------------------------------------------------------- site bar */
+
+.site-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.wordmark {
+  font-family: var(--mono);
+  font-size: .9rem;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.wordmark b { color: var(--text); font-weight: 650; }
+a.wordmark:hover b { text-decoration: underline; }
+
+.site-nav { display: flex; gap: 1rem; font-size: .85rem; }
+.site-nav a { color: var(--muted); text-decoration: none; }
+.site-nav a:hover { color: var(--text); text-decoration: underline; }
+
+/* ------------------------------------------------------------ page header */
+
+.page-header { padding: 2.5rem 0 1.75rem; }
+.page-header h1 {
+  margin: 0 0 .5rem;
+  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.lede { margin: 0; max-width: 60ch; color: var(--muted); font-size: 1.02rem; }
+
+/* Breadcrumb back to the index, used on tool pages. */
+.crumb { margin: 0 0 .9rem; font-size: .85rem; }
+.crumb a { color: var(--muted); text-decoration: none; }
+.crumb a:hover { color: var(--text); text-decoration: underline; }
+
+/* ----------------------------------------------------------------- panels */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.section { margin-top: 2.5rem; }
+.section > h2 {
+  margin: 0 0 1rem;
+  font-family: var(--mono);
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------ tool cards */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color .12s ease, transform .12s ease;
+}
+a.card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+a.card:hover .card-title { color: var(--link); }
+
+.card-icon { color: var(--muted); }
+.card-icon svg { display: block; width: 24px; height: 24px; }
+a.card:hover .card-icon { color: var(--link); }
+
+.card-title { margin: 0; font-size: 1.05rem; font-weight: 620; letter-spacing: -0.01em; }
+.card-desc { margin: 0; color: var(--muted); font-size: .9rem; flex: 1; }
+
+.card-tags {
+  margin: .35rem 0 0;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted);
+  word-spacing: .1em;
+}
+
+/* Placeholder that keeps the grid from looking half-built. Not a link. */
+.card.is-ghost {
+  background: none;
+  border-style: dashed;
+  color: var(--muted);
+}
+.card.is-ghost .card-title { font-weight: 550; color: var(--muted); }
+
+/* ------------------------------------------------------------- promises */
+
+.promises { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; margin: 0; }
+.promises > div { min-width: 0; }
+.promises dt { font-weight: 620; margin-bottom: .2rem; }
+.promises dd { margin: 0; color: var(--muted); font-size: .9rem; }
+
+/* --------------------------------------------------------------- fields */
+
+.field { margin-bottom: .9rem; min-width: 0; }
+.field > label { display: block; margin-bottom: .3rem; font-size: .82rem; font-weight: 600; color: var(--muted); }
+.field.checkbox > label { display: flex; align-items: center; gap: .45rem; font-weight: 500; color: var(--text); font-size: .9rem; }
+.field.checkbox { display: flex; align-items: flex-end; padding-bottom: .35rem; }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+@media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+input[type="text"], textarea, select {
+  width: 100%;
+  padding: .5rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+textarea { resize: vertical; font-family: var(--mono); font-size: .9rem; }
+input[type="text"] { font-family: var(--mono); font-size: .9rem; }
+
+input[type="range"] { width: 100%; accent-color: var(--ink); }
+input[type="checkbox"] { accent-color: var(--ink); }
+input[type="color"] {
+  width: 100%; height: 2.2rem; padding: 2px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+output { font-variant-numeric: tabular-nums; color: var(--text); }
+
+.hint { margin: .35rem 0 0; font-size: .8rem; color: var(--muted); }
+
+/* Disclosure block for secondary settings. */
+.options { margin-top: .5rem; border-top: 1px solid var(--border); padding-top: .75rem; }
+.options > summary { cursor: pointer; font-size: .85rem; font-weight: 600; color: var(--muted); margin-bottom: .75rem; }
+.options > summary:hover { color: var(--text); }
+
+/* -------------------------------------------------------------- buttons */
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  padding: .5rem .9rem;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { border-color: var(--border-strong); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: var(--ink); border-color: var(--ink); color: var(--ink-text); }
+.btn.primary:hover:not(:disabled) { opacity: .88; }
+
+/* ---------------------------------------------------------------- misc */
+
+.error {
+  margin: .85rem 0 0;
+  padding: .55rem .7rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  font-size: .87rem;
+}
+
+.meta { margin: .7rem 0 0; font-size: .8rem; color: var(--muted); word-break: break-word; }
+
+.prose h2 { margin: 0 0 .6rem; font-size: 1.05rem; }
+.prose ul { margin: 0; padding-left: 1.1rem; color: var(--muted); }
+.prose li { margin-bottom: .45rem; }
+.prose strong { color: var(--text); }
+
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  background: var(--surface-2);
+  padding: .1em .35em;
+  border-radius: 4px;
+}
+
+.site-footer {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: .82rem;
+}
+.site-footer p { margin: 0 0 .4rem; }

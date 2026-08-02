@@ -1,0 +1,64 @@
+/*
+ * QR & barcode generator — layout specific to this tool.
+ *
+ * Tokens, page chrome, form controls, buttons, .panel and .prose come from
+ * ../assets/site.css; this file only adds what the generator needs.
+ */
+
+/* ---------------------------------------------------------------- tabs */
+
+.tabs { display: flex; gap: .35rem; margin-bottom: 1rem; }
+
+.tab {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  padding: .5rem 1rem;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 550;
+  cursor: pointer;
+}
+.tab:hover { color: var(--text); }
+.tab.is-active { background: var(--ink); border-color: var(--ink); color: var(--ink-text); }
+
+/* ----------------------------------------------------------- workspace */
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .workspace { grid-template-columns: 1fr; }
+}
+
+.preview { position: sticky; top: 1rem; }
+
+/* ------------------------------------------------------------- preview */
+
+.preview-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 1rem;
+  border-radius: var(--radius);
+  /* Chequerboard, so a transparent background reads as transparent. */
+  background:
+    linear-gradient(45deg, var(--surface-2) 25%, transparent 25%, transparent 75%, var(--surface-2) 75%) 0 0 / 16px 16px,
+    linear-gradient(45deg, var(--surface-2) 25%, transparent 25%, transparent 75%, var(--surface-2) 75%) 8px 8px / 16px 16px;
+  overflow: auto;
+}
+
+#canvas { max-width: 100%; height: auto; image-rendering: pixelated; }
+#canvas[hidden] { display: none; }
+
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+
+/* --------------------------------------------------------------- notes */
+
+.notes { margin-top: 1.25rem; }
