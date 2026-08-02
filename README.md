@@ -1,24 +1,27 @@
 # actually-free-tools
 
+### → **[iglaaa42.github.io/actually-free-tools](https://iglaaa42.github.io/actually-free-tools/)**
+
 Rebuilds of basic tools that got paywalled, ad-stuffed, or turned into a funnel.
 No accounts, no uploads, no "dynamic" links pointing at someone else's redirect
 domain.
 
-Open `index.html` for the tool index. Everything is static files — no build step,
-no server, no dependencies — so it runs from disk or from any static host. Staying
-that cheap to host is a hard constraint, not an accident; see
-[CLAUDE.md](CLAUDE.md) for the rules.
+Everything is static files — no build step, no server, no dependencies — so it
+runs from the link above, from any other static host, or straight off disk by
+opening `index.html`. Staying that cheap to host is a hard constraint, not an
+accident; see [CLAUDE.md](CLAUDE.md) for the rules.
 
 ## Tools
 
-| | |
-|---|---|
-| [`qr-barcode/`](qr-barcode/) | QR codes and 1D barcodes, PNG or SVG |
+| | | |
+|---|---|---|
+| [`qr-barcode/`](qr-barcode/) | QR codes and 1D barcodes, PNG or SVG | [open ↗](https://iglaaa42.github.io/actually-free-tools/qr-barcode/) |
 
 ## QR & barcode generator
 
-Open `qr-barcode/index.html`. Save the folder (with `assets/` alongside it) and it
-works with the network off.
+[Live](https://iglaaa42.github.io/actually-free-tools/qr-barcode/), or open
+`qr-barcode/index.html` locally. Save the folder (with `assets/` alongside it) and
+it works with the network off.
 
 **QR codes** — ISO/IEC 18004: versions 1–40, error correction L/M/Q/H, numeric /
 alphanumeric / byte (UTF-8) modes, all eight data masks with the standard penalty
