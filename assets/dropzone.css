@@ -1,0 +1,47 @@
+/*
+ * File drop zone — shared by the tools that take files rather than typed input.
+ *
+ * Loaded after site.css and before the tool's own stylesheet. It uses the same
+ * tokens and adds no new ones.
+ *
+ * The <label> is the whole target, so clicking it opens the file picker with no
+ * JavaScript involved; the input stays focusable rather than display:none, or
+ * it would drop out of the tab order and off the keyboard entirely.
+ */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+  margin-bottom: 1.25rem;
+  padding: 2.25rem 1.25rem;
+  text-align: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .12s ease, background-color .12s ease;
+}
+.dropzone:hover { border-color: var(--link); }
+
+/* The input sits immediately before the label, so its focus ring can be drawn
+   on the label the user actually sees. */
+.visually-hidden:focus-visible + .dropzone,
+.dropzone:focus-within { outline: 2px solid var(--link); outline-offset: 2px; }
+
+.dropzone.is-dragging { border-color: var(--link); background: var(--link-soft); }
+
+.dropzone-title { font-weight: 620; font-size: 1.05rem; }
+.dropzone-hint { color: var(--muted); font-size: .88rem; }
