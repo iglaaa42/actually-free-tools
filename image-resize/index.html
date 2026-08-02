@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image resizer &amp; converter — actually free tools</title>
+<meta name="description" content="Resize, convert and compress images in your browser. No upload, no account, no watermark, no file-count limit.">
+<!--
+  Nothing here reaches the network. connect-src blocks fetch/XHR/WebSocket and
+  sendBeacon; img-src is pinned to the page's own origin plus data: and blob:,
+  so a picture can't be smuggled out as a query string on an <img> either.
+  script-src is deliberately left unset: 'self' does not match file:// URLs, and
+  this page has to keep working when the folder is opened straight off disk.
+-->
+<meta http-equiv="Content-Security-Policy" content="connect-src 'none'; img-src 'self' data: blob:; media-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/dropzone.css">
+<link rel="stylesheet" href="tool.css">
+<link rel="icon" href="../favicon.svg">
+</head>
+<body>
+
+<header class="site-bar">
+  <a class="wordmark" href="../">actually <b>free</b> tools</a>
+  <nav class="site-nav">
+    <a href="https://github.com/iglaaa42/actually-free-tools">Source</a>
+  </nav>
+</header>
+
+<div class="page-header">
+  <p class="crumb"><a href="../">← All tools</a></p>
+  <h1>Image resizer &amp; converter</h1>
+  <p class="lede">
+    Resize, convert and compress as many images as you like. They never leave your device — there's no
+    upload, no queue, no file-size cap and no watermark on the way out.
+  </p>
+</div>
+
+<main>
+  <label class="dropzone" id="drop" for="picker">
+    <span class="dropzone-title">Drop images here</span>
+    <span class="dropzone-hint">or click to choose — one image or a few hundred</span>
+  </label>
+  <input class="visually-hidden" type="file" id="picker" accept="image/*" multiple>
+
+  <p class="error" id="error" role="alert" hidden></p>
+
+  <div class="workspace" id="workspace" hidden>
+    <!-- ---------------------------------------------------------- settings -->
+    <section class="controls panel">
+      <div class="field">
+        <label for="mode">Resize to</label>
+        <select id="mode">
+          <option value="fit">Fit inside a box</option>
+          <option value="width">A set width</option>
+          <option value="height">A set height</option>
+          <option value="percent">A percentage</option>
+          <option value="exact">Exact size (ignores aspect ratio)</option>
+          <option value="none">Leave the size alone</option>
+        </select>
+      </div>
+
+      <div class="row" data-for="fit">
+        <div class="field">
+          <label for="max-width">Max width (px)</label>
+          <input id="max-width" type="text" inputmode="numeric" value="1600">
+        </div>
+        <div class="field">
+          <label for="max-height">Max height (px)</label>
+          <input id="max-height" type="text" inputmode="numeric" value="1600">
+        </div>
+      </div>
+
+      <div class="field" data-for="width" hidden>
+        <label for="target-width">Width (px)</label>
+        <input id="target-width" type="text" inputmode="numeric" value="1200">
+      </div>
+
+      <div class="field" data-for="height" hidden>
+        <label for="target-height">Height (px)</label>
+        <input id="target-height" type="text" inputmode="numeric" value="1200">
+      </div>
+
+      <div class="field" data-for="percent" hidden>
+        <label for="percent">Scale <output id="percent-out">50</output>%</label>
+        <input id="percent" type="range" min="1" max="200" value="50">
+      </div>
+
+      <div class="row" data-for="exact" hidden>
+        <div class="field">
+          <label for="exact-width">Width (px)</label>
+          <input id="exact-width" type="text" inputmode="numeric" value="1200">
+        </div>
+        <div class="field">
+          <label for="exact-height">Height (px)</label>
+          <input id="exact-height" type="text" inputmode="numeric" value="800">
+        </div>
+      </div>
+
+      <div class="field checkbox" data-for="fit width height">
+        <label><input id="upscale" type="checkbox"> Enlarge images that are already smaller</label>
+      </div>
+
+      <details class="options" open>
+        <summary>Format &amp; quality</summary>
+        <div class="field">
+          <label for="format">Save as</label>
+          <select id="format">
+            <option value="">Keep the original format</option>
+            <option value="image/jpeg">JPEG — smallest, no transparency</option>
+            <option value="image/png">PNG — lossless, keeps transparency</option>
+            <option value="image/webp">WebP — smaller than JPEG at the same quality</option>
+          </select>
+        </div>
+        <div class="field" id="quality-field">
+          <label for="quality">Quality <output id="quality-out">82</output></label>
+          <input id="quality" type="range" min="1" max="100" value="82">
+          <p class="hint">Only applies to JPEG and WebP. PNG is lossless, so quality does nothing to it.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ----------------------------------------------------------- results -->
+    <section class="results panel">
+      <div id="single" hidden>
+        <div class="compare">
+          <figure class="shot">
+            <div class="shot-stage"><img id="before-img" alt="The image you picked"></div>
+            <figcaption id="before-caption"></figcaption>
+          </figure>
+          <figure class="shot">
+            <div class="shot-stage"><img id="after-img" alt="The resized result"></div>
+            <figcaption id="after-caption"></figcaption>
+          </figure>
+        </div>
+        <p class="meta" id="single-meta"></p>
+      </div>
+
+      <div id="batch" hidden>
+        <p class="meta" id="batch-summary"></p>
+        <ul class="filelist" id="filelist"></ul>
+      </div>
+
+      <p class="meta" id="status" aria-live="polite"></p>
+
+      <div class="actions">
+        <button type="button" id="download" class="btn primary" disabled>Download</button>
+        <button type="button" id="clear" class="btn">Start over</button>
+      </div>
+    </section>
+  </div>
+
+  <section class="notes panel prose">
+    <h2>What this does and doesn't do</h2>
+    <ul>
+      <li><strong>Nothing is uploaded.</strong> Your browser reads the file off your disk, resizes it on a
+        canvas and hands you the result. The page makes no network requests at all — check the network tab,
+        or turn the Wi-Fi off and watch it keep working.</li>
+      <li><strong>Big downscales are done in stages.</strong> Going from 4000&nbsp;px to 300&nbsp;px in one
+        step makes a noisy, aliased mess, because the browser's filter only samples a small neighbourhood.
+        This halves repeatedly and finishes on the exact target, which is what image editors do.</li>
+      <li><strong>Resizing drops metadata as a side effect.</strong> The output is drawn fresh from decoded
+        pixels, so EXIF, GPS coordinates and camera serial numbers don't survive the trip. Rotation is
+        applied first, so photos taken sideways come out the right way up. If you want to remove metadata
+        <em>without</em> re-encoding and losing quality, use the
+        <a href="../image-metadata/">metadata stripper</a> instead.</li>
+      <li><strong>No limits.</strong> No cap on file count, no maximum resolution beyond what your browser
+        will allocate, no daily quota, no "upgrade for batch mode".</li>
+      <li><strong>Not included:</strong> cropping, rotation, filters, background removal. Those want a real
+        editor, and there are good free ones.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>The resize maths is plain, testable JavaScript: <code>node tests/image.mjs</code>.</p>
+  <p><a href="../">All tools</a> · <a href="https://github.com/iglaaa42/actually-free-tools">Source on GitHub</a></p>
+</footer>
+
+<script src="../assets/zip.js"></script>
+<script src="resize.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+/*
+ * Metadata viewer & stripper — layout specific to this tool.
+ *
+ * Tokens, chrome, .panel, .field and .btn come from ../assets/site.css, and the
+ * drop zone from ../assets/dropzone.css; this file only adds the report.
+ */
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .workspace { grid-template-columns: 1fr; }
+  .controls { position: static; }
+}
+
+.controls { position: sticky; top: 1rem; }
+
+.summary {
+  margin: 0 0 1rem;
+  font-size: .95rem;
+}
+.summary b { font-weight: 620; }
+
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+
+/* --------------------------------------------------------------- report */
+
+.report-title {
+  margin: 0 0 .3rem;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+
+.report h3 {
+  margin: 1.5rem 0 .6rem;
+  font-family: var(--mono);
+  font-size: .74rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.clean-note {
+  margin: 1rem 0 0;
+  padding: .7rem .8rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+/* -------------------------------------------------------------- callout */
+
+.callout {
+  margin: 1rem 0 0;
+  padding: .8rem .9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: .9rem;
+}
+.callout p { margin: 0; }
+.callout p + p { margin-top: .3rem; }
+.callout-title { font-weight: 620; }
+
+/* The one that actually matters: coordinates of where a photo was taken. */
+.callout.is-alert {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+.callout.is-alert .callout-title { color: var(--danger); }
+
+.coords {
+  font-family: var(--mono);
+  font-size: .85rem;
+  word-break: break-all;
+}
+
+/* ----------------------------------------------------------------- tags */
+
+.tags {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+  gap: .35rem .9rem;
+  margin: 0;
+  font-size: .9rem;
+}
+
+@media (max-width: 520px) {
+  .tags { grid-template-columns: 1fr; gap: 0 0; }
+  .tags dd { margin-bottom: .6rem; }
+}
+
+.tags dt { color: var(--muted); }
+.tags dd { margin: 0; word-break: break-word; }
+
+/* ------------------------------------------------------------- segments */
+
+.segments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: .88rem;
+}
+
+.segments li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.segments li:last-child { border-bottom: 0; }
+
+.segments .label { min-width: 0; word-break: break-word; }
+
+.segments .size {
+  flex: none;
+  font-family: var(--mono);
+  font-size: .76rem;
+  color: var(--muted);
+}
+
+.badge {
+  flex: none;
+  padding: .1rem .45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.badge.is-removed {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ------------------------------------------------------------ file list */
+
+.filelist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 30rem;
+  overflow-y: auto;
+}
+
+.filelist li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .88rem;
+}
+.filelist li:last-child { border-bottom: 0; }
+
+.filelist .name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filelist .numbers {
+  flex: none;
+  font-family: var(--mono);
+  font-size: .76rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.filelist .numbers b { color: var(--text); font-weight: 600; }
+.filelist .has-gps { color: var(--danger); }
+.filelist .failed { color: var(--danger); }
+
+/* --------------------------------------------------------------- notes */
+
+.notes { margin-top: 1.25rem; }

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image metadata viewer &amp; stripper — actually free tools</title>
+<meta name="description" content="See the EXIF, GPS and camera data hidden in your photos and remove it, without uploading anything and without re-compressing the image.">
+<!--
+  Nothing here reaches the network. connect-src blocks fetch/XHR/WebSocket and
+  sendBeacon; img-src is pinned to the page's own origin plus data: and blob:,
+  so a photo can't be smuggled out as a query string on an <img> either. That
+  matters more here than anywhere else on the site: the whole point of this page
+  is that the location in your photo doesn't go anywhere.
+  script-src is deliberately left unset: 'self' does not match file:// URLs, and
+  this page has to keep working when the folder is opened straight off disk.
+-->
+<meta http-equiv="Content-Security-Policy" content="connect-src 'none'; img-src 'self' data: blob:; media-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/dropzone.css">
+<link rel="stylesheet" href="tool.css">
+<link rel="icon" href="../favicon.svg">
+</head>
+<body>
+
+<header class="site-bar">
+  <a class="wordmark" href="../">actually <b>free</b> tools</a>
+  <nav class="site-nav">
+    <a href="https://github.com/iglaaa42/actually-free-tools">Source</a>
+  </nav>
+</header>
+
+<div class="page-header">
+  <p class="crumb"><a href="../">← All tools</a></p>
+  <h1>Image metadata viewer &amp; stripper</h1>
+  <p class="lede">
+    See exactly what your photos are carrying — GPS coordinates, camera serial numbers, the software you
+    used — and strip it out without touching a single pixel. The file never leaves your device, which is
+    rather the point.
+  </p>
+</div>
+
+<main>
+  <label class="dropzone" id="drop" for="picker">
+    <span class="dropzone-title">Drop photos here</span>
+    <span class="dropzone-hint">or click to choose — JPEG, PNG or WebP</span>
+  </label>
+  <input class="visually-hidden" type="file" id="picker" accept="image/jpeg,image/png,image/webp" multiple>
+
+  <p class="error" id="error" role="alert" hidden></p>
+
+  <div class="workspace" id="workspace" hidden>
+    <!-- ---------------------------------------------------------- settings -->
+    <section class="controls panel">
+      <p class="summary" id="summary"></p>
+
+      <div class="field checkbox">
+        <label><input id="drop-profile" type="checkbox"> Also remove the colour profile</label>
+      </div>
+      <p class="hint">
+        The ICC profile describes how the colours should be interpreted. It isn't personal information, and
+        removing it can visibly shift the colours of anything that isn't plain sRGB — so it stays by default.
+      </p>
+
+      <div class="actions">
+        <button type="button" id="download" class="btn primary" disabled>Download clean copy</button>
+        <button type="button" id="clear" class="btn">Start over</button>
+      </div>
+      <p class="meta" id="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ------------------------------------------------------------ report -->
+    <section class="report panel" id="report">
+      <div id="single" hidden>
+        <h2 class="report-title" id="report-title"></h2>
+        <p class="meta" id="report-meta"></p>
+
+        <div class="callout is-alert" id="gps-callout" hidden>
+          <p class="callout-title">This photo records where it was taken.</p>
+          <p id="gps-detail"></p>
+        </div>
+
+        <div class="callout" id="orientation-callout" hidden>
+          <p class="callout-title">This photo is stored rotated.</p>
+          <p id="orientation-detail"></p>
+        </div>
+
+        <div id="tags-block" hidden>
+          <h3>What it says about you</h3>
+          <dl class="tags" id="tags"></dl>
+        </div>
+
+        <p class="clean-note" id="clean-note" hidden>
+          No EXIF, GPS or text metadata found — this file is already clean.
+        </p>
+
+        <h3>Everything in the file</h3>
+        <ul class="segments" id="segments"></ul>
+      </div>
+
+      <div id="batch" hidden>
+        <h2 class="report-title" id="batch-title"></h2>
+        <ul class="filelist" id="filelist"></ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="notes panel prose">
+    <h2>What this does and doesn't do</h2>
+    <ul>
+      <li><strong>Nothing is uploaded.</strong> Every byte is read and rewritten in your browser. The page
+        makes no network requests at all — which is worth checking, because "remove EXIF online" sites ask
+        you to upload the exact photo whose location you're trying to hide.</li>
+      <li><strong>The pixels are not touched.</strong> This isn't a re-save. The compressed image data is
+        copied across byte for byte and only the containers around it are rewritten, so a stripped JPEG
+        decodes to exactly the same image at exactly the same quality. Tools that "remove metadata" by
+        re-encoding quietly cost you quality every time.</li>
+      <li><strong>It shows you first.</strong> You can see what was in there, what's being removed and what
+        is being kept, before you download anything.</li>
+      <li><strong>Colour profiles are kept by default.</strong> They aren't personal data, and dropping them
+        changes how the image looks. There's a checkbox if you want it gone anyway.</li>
+      <li><strong>One caveat:</strong> if a photo relies on an EXIF orientation flag to display upright,
+        removing the metadata will leave it sideways. The page warns you when that's the case, and the
+        <a href="../image-resize/">resizer</a> can bake the rotation into the pixels instead.</li>
+      <li><strong>Not included:</strong> editing metadata, adding a copyright tag, or stripping metadata from
+        video. Those are different jobs.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>The parser and the stripper are plain, testable JavaScript, checked against hand-built files with known
+     metadata at known offsets: <code>node tests/image.mjs</code>.</p>
+  <p><a href="../">All tools</a> · <a href="https://github.com/iglaaa42/actually-free-tools">Source on GitHub</a></p>
+</footer>
+
+<script src="../assets/zip.js"></script>
+<script src="metadata.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
